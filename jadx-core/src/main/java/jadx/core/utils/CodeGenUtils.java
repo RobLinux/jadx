@@ -121,7 +121,7 @@ public class CodeGenUtils {
 		if (!node.checkCommentsLevel(CommentsLevel.INFO)) {
 			return;
 		}
-		code.startLine("/* renamed from: ").add(origName);
+		code.startLine("/* renamed from: ").add(escapeUnicodeChars(origName));
 		RenameReasonAttr renameReasonAttr = node.get(AType.RENAME_REASON);
 		if (renameReasonAttr != null) {
 			code.add("  reason: ");
@@ -161,6 +161,19 @@ public class CodeGenUtils {
 			return svar.getCodeVar();
 		}
 		return null;
+	}
+
+	private static String escapeUnicodeChars(String input) {
+		StringBuilder b = new StringBuilder();
+
+		for (char c : input.toCharArray()) {
+			if (c >= 128)
+				b.append("\\u").append(String.format("%04X", (int) c));
+			else
+				b.append(c);
+		}
+
+		return b.toString();
 	}
 
 	private CodeGenUtils() {
